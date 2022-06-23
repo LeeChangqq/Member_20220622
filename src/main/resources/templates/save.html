@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <form action="/member/save" method="post">
+        <input type="text" name="memberEmail" id="memberEmail" onblur="emailDuplicate()"><br>
+        <span id="a"></span>
+        <input type="text" name="memberPassword"><br>
+        <input type="text" name="memberName"><br>
+        <input type="text" name="memberAge"><br>
+        <input type="text" name="memberPhone"><br>
+        <input type="submit">
+    </form>
+</body>
+<script th:inline="javascript">
+    const emailDuplicate = () => {
+        const email = document.getElementById("memberEmail").value;
+        const a = document.getElementById("a");
+        $.ajax({
+            type: "post",
+            url: "/member/emailCheck",
+            dataType: "text",
+            data: {
+                "memberEmail": email
+            },
+            success: function (result){
+                if(result == "ok") {
+                    a.innerHTML = "사용가능합니다.";
+                    a.style.color = "green";
+                }else {
+                    a.innerHTML = "이미 사용중인 아이디 입니다.";
+                    a.style.color = "red";
+                }
+            },
+            error: function () {
+                alert("실패");
+            }
+        })
+    }
+</script>
+</html>

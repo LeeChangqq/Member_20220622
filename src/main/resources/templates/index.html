@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <a href="/member/save">회원가입</a>
+    <a href="/member/login">로그인</a>
+    <a href="/member/">회원목록</a>
+    <h4>[[${session.email}]]</h4>
+    <h4>[[${session.id}]]</h4>
+    <p th:text="${session['email']}"></p>
+    <p th:text="${session.id}"></p>
+    <a onclick="ajaxDetail()">상세조회(ajax)</a><br>
+    <a href="/member/update">내 정보 수정하기</a>
+    <p id="detail-contents"></p>
+</body>
+<script>
+    const memberDetail = () => {
+        const id = '[[${session.loginId}]]';
+        if (id != '') {
+            location.href = "/member/" + id;
+        } else {
+            alert("로그인 후 상세정보 조회가 가능합니다.");
+        }
+    }
+
+    const ajaxDetail = () => {
+        const id = '[[${session.id}]]';
+        const detailContents = document.querySelector("#detail-contents");
+        console.log(id);
+        $.ajax({
+            type: "get",
+            url: "/member/ajax/" + id,
+            data: {"id": id},
+            dataType: "json",
+            success: function (result) {
+                let output = '<table><tr>';
+                output += '<th>회원번호</th>';
+                output += '<th>이메일</th>';
+                output += '<th>비밀번호</th>';
+                output += '<th>이름</th>';
+                output += '<th>나이</th>';
+                output += '<th>전화번호</th></tr>';
+
+                output += '<tr><td>' + result.id + '</td>';
+                output += '<td>' + result.memberEmail + '</td>';
+                output += '<td>' + result.memberPassword + '</td>';
+                output += '<td>' + result.memberName + '</td>';
+                output += '<td>' + result.memberAge + '</td>';
+                output += '<td>' + result.memberPhone + '</td></tr>';
+
+                detailContents.innerHTML = output;
+            }
+        });
+    }
+
+    const memberLogout = () => {
+        location.href = "/member/logout";
+    }
+</script>
+</html>
